@@ -1,3 +1,5 @@
+DEVICE_PATH := device/xiaomi/mist
+
 # Initial LineageOS 24.0 mist product integration.
 # Shared SM4450 tree is pinned in manifests/mist-sm4450.xml.
 $(call inherit-product, device/xiaomi/sm4450-common/common.mk)
@@ -20,3 +22,6 @@ DEVICE_MANIFEST_FILE := \
 # - Validate this mist VINTF against effective runtime and fix audio SKU / overlays
 # - Validate mist mount table, AVB, recovery, kernel module list, SELinux
 # - Verify actual WPUMIDC.C11 hardware variant against Global stock
+
+# Vendor mist repository is optional until mist-only blobs are identified.
+$(call inherit-product-if-exists, vendor/xiaomi/mist/mist-vendor.mk)

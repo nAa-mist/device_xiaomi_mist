@@ -26,3 +26,6 @@ BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 10196353024
 # Do not import ravelin-specific VINTF, SKU or kernel-module assumptions blindly.
 # The common tree has manifest_ravelin.xml and sku_ravelin audio settings.
 # Preflight reports these as open device-specific blockers; no release is safe yet.
+
+# Optional mist-only vendor settings; common SM4450 vendor config is unchanged.
+-include vendor/xiaomi/mist/BoardConfigVendor.mk

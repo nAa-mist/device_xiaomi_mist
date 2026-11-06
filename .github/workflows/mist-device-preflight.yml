@@ -1,0 +1,68 @@
+name: mist device tree preflight (research is read-only)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mist-device-preflight-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout canonical mist device tree
+        uses: actions/checkout@v4
+      - name: Get existing verified research metadata (no firmware download)
+        shell: bash
+        run: |
+          git clone -q --depth=1 https://github.com/nAa-mist/mist-bringup.git "$RUNNER_TEMP/mist-bringup"
+          mkdir -p generated/ device/xiaomi/
+          ln -s "$RUNNER_TEMP/mist-bringup/generated/stock-global" generated/stock-global
+          ln -s ../.. device/xiaomi/mist
+          test -f generated/stock-global/file-inventory.csv
+          test -f generated/stock-global/ramdisk-configs.txt
+      - name: Fetch pinned SM4450 common reference
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/sm4450-common"
+          cd "$RUNNER_TEMP/sm4450-common"
+          git init -q
+          git remote add origin https://github.com/xiaomi-ravelin/android_device_xiaomi_sm4450-common.git
+          git fetch -q --depth=1 origin a476fff00d6149fc988f12f43b73cde1587c7b88
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = a476fff00d6149fc988f12f43b73cde1587c7b88
+      - name: Run original device-level tests
+        run: |
+          python3 -m compileall -q scripts
+          python3 -m unittest discover -s tests -v
+      - name: Check device tree and matching proprietary source paths
+        run: |
+          python3 -u scripts/preflight.py \
+            --common "$RUNNER_TEMP/sm4450-common" \
+            --report "$RUNNER_TEMP/mist-device-report"
+      - name: Check fstab, AVB and module mismatches
+        run: |
+          python3 -u scripts/audit_remaining.py \
+            --common "$RUNNER_TEMP/sm4450-common" \
+            --report "$RUNNER_TEMP/mist-device-report"
+      - name: Confirm firmware and proprietary binaries are absent
+        run: |
+          if git ls-files | grep -E '\.(img|tgz|ko|so)$'; then
+            echo "Unexpected stock binary in device source" >&2
+            exit 1
+          fi
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mist-device-validation-${{ github.run_number }}
+          path: ${{ runner.temp }}/mist-device-report/
+          retention-days: 45
+          if-no-files-found: warn

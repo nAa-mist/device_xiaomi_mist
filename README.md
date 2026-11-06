@@ -24,3 +24,12 @@ Run the single GH Actions mist-preflight workflow, then inspect its explicit lis
   to upstream extraction/fixups instead of generating a second vendor module set.
 - Common audio still uses sku_ravelin paths, and shared first-stage fstab still
   needs reconciliation with stock F2FS/encryption. Neither is declared solved.
+
+## Canonical nAa-mist repository layout
+
+- **Device tree (this repository):** `device/xiaomi/mist`, including BoardConfig, VINTF, product config, extraction entry point, build checks.
+- **Mist-only vendor:** [nAa-mist/vendor_xiaomi_mist](https://github.com/nAa-mist/vendor_xiaomi_mist), checkout at `vendor/xiaomi/mist`. Device-specific blobs are not yet extracted.
+- **Research evidence and all original source history:** [nAa-mist/mist-bringup](https://github.com/nAa-mist/mist-bringup). Firmware inspection and generated reports remain there.
+- **Shared Qualcomm SM4450 common/kernel/modular sources:** currently pinned to the public `xiaomi-ravelin` sources in `manifests/mist-sm4450.xml`; not owned by this repo yet.
+
+Run the device repository's standalone Actions preflight to validate the tree against archived stock evidence; it does **not** download the 8.1 GB firmware. The source is not a boot-tested ROM.
