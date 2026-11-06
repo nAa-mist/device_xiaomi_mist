@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-  <!-- Pinned LineageOS 24.0 SM4450 reference projects for reproducible bring-up. -->
+  <!-- nAa-mist canonical device and shared sources; no firmware is downloaded. -->
+  <remote name="nAa-mist" fetch="https://github.com/nAa-mist" />
   <remote name="xiaomi-ravelin" fetch="https://github.com/xiaomi-ravelin" />
-  <project name="android_device_xiaomi_sm4450-common" path="device/xiaomi/sm4450-common" remote="xiaomi-ravelin" revision="a476fff00d6149fc988f12f43b73cde1587c7b88" />
+  <!-- Self revision stays on main because its SHA changes when this manifest changes. -->
+  <project name="device_xiaomi_mist" path="device/xiaomi/mist" remote="nAa-mist" revision="main" />
+  <project name="vendor_xiaomi_mist" path="vendor/xiaomi/mist" remote="nAa-mist" revision="8da5f01080ff2fe9374eb1c4227dbdb5bbc45c5e" />
+  <project name="device_xiaomi_sm4450-common" path="device/xiaomi/sm4450-common" remote="nAa-mist" revision="bee0a6ae720c163948ae3df4a5a33ef49b2aeef8" />
+  <project name="vendor_xiaomi_sm4450-common" path="vendor/xiaomi/sm4450-common" remote="nAa-mist" revision="f014fe5adc26c337cd0ff14a1e2088a0d18a4f08" />
+  <!-- Core kernel is NOT mirrored yet. Replace after reviewing the mist kernel upload. -->
   <project name="android_kernel_xiaomi_sm4450" path="kernel/xiaomi/sm4450" remote="xiaomi-ravelin" revision="f879c1be9822631de45f9ef4a5db5a98729dd180" />
-  <project name="android_kernel_xiaomi_sm4450-modules" path="kernel/xiaomi/sm4450-modules" remote="xiaomi-ravelin" revision="23a3d2ac880e7f1f8185fd86abb7a8ff94d24ec3" />
-  <project name="android_kernel_xiaomi_sm4450-devicetrees" path="kernel/xiaomi/sm4450-devicetrees" remote="xiaomi-ravelin" revision="da6aa48e7f1ab75dfaff618fa2339940d85d8e04" />
+  <project name="kernel_xiaomi_sm4450-modules" path="kernel/xiaomi/sm4450-modules" remote="nAa-mist" revision="7cd5cad3e08eab9d1fdc3d411a7a0f93be16fd96" />
+  <project name="kernel_xiaomi_sm4450-devicetrees" path="kernel/xiaomi/sm4450-devicetrees" remote="nAa-mist" revision="f7509ca3aa34dfdbe43570d9c5efd9f88aa4a801" />
 </manifest>

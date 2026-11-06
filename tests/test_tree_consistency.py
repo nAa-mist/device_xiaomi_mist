@@ -56,8 +56,15 @@ class MistTreeTests(unittest.TestCase):
         paths = [p.attrib["path"] for p in projects]
         self.assertGreaterEqual(len(paths), 4)
         self.assertEqual(len(paths), len(set(paths)))
-        self.assertNotIn("device/xiaomi/mist", paths)
-        self.assertTrue(all(len(p.attrib.get("revision", "")) == 40 for p in projects))
+        self.assertIn("device/xiaomi/mist", paths)
+        self.assertEqual(len(paths), 7)
+        self.assertTrue(all(
+            len(p.attrib.get("revision", "")) == 40
+            or (p.attrib["path"] == "device/xiaomi/mist"
+                and p.attrib.get("revision") == "main")
+            for p in projects))
+        self.assertEqual({p.attrib["remote"] for p in projects},
+                         {"nAa-mist", "xiaomi-ravelin"})
 
     def test_stock_partition_config(self):
         board = (ROOT / "device/xiaomi/mist/BoardConfig.mk").read_text()

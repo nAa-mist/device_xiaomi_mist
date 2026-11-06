@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 SUPER_SIZE = 10200547328
 GROUP_SIZE = SUPER_SIZE - 4194304
-UPSTREAM_COMMON_SHA = "a476fff00d6149fc988f12f43b73cde1587c7b88"
+UPSTREAM_COMMON_SHA = "bee0a6ae720c163948ae3df4a5a33ef49b2aeef8"
 EXPECTED = {
     "BOARD_SUPER_PARTITION_SIZE": SUPER_SIZE,
     "BOARD_QTI_DYNAMIC_PARTITIONS_SIZE": GROUP_SIZE,
@@ -28,10 +28,14 @@ EXPECTED = {
     "BOARD_DTBOIMG_PARTITION_SIZE": 25165824,
 }
 PROJECT_PATHS = {
+    "device/xiaomi/mist",
+    "vendor/xiaomi/mist",
     "device/xiaomi/sm4450-common",
+    "vendor/xiaomi/sm4450-common",
     "kernel/xiaomi/sm4450",
     "kernel/xiaomi/sm4450-modules",
     "kernel/xiaomi/sm4450-devicetrees",
+
 }
 
 
@@ -102,7 +106,11 @@ def analyze(common):
     if paths != PROJECT_PATHS:
         raise ValueError("Common/kernel/modules/DT project set mismatch")
     for project in projects:
-        if not re.fullmatch(r"[a-f0-9]{40}", project.attrib["revision"]):
+        path = project.attrib["path"]
+        revision = project.attrib["revision"]
+        if path == "device/xiaomi/mist" and revision == "main":
+            continue  # The manifest lives in the same repository (self-reference).
+        if not re.fullmatch(r"[a-f0-9]{40}", revision):
             raise ValueError("Unpinned dependency: " + project.attrib["name"])
     if not common.is_dir():
         raise ValueError("Pinned SM4450 common source missing")

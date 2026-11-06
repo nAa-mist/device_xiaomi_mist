@@ -1,28 +1,23 @@
-# Integrating the canonical nAa-mist repositories
+# LineageOS 24.0: nAa-mist canonical manifest
 
-Paths within a complete LineageOS 24.0 / Android 17 source checkout:
+Use `manifests/mist-sm4450.xml` as a local manifest in a **separate**
+LineageOS 24.0 source checkout. Inspect for path collisions with existing
+`.repo/local_manifests` first.
 
-| Project | Repository | Checkout path |
+| Checkout path | Repository | Import status |
 | --- | --- | --- |
-| Device | [device_xiaomi_mist](https://github.com/nAa-mist/device_xiaomi_mist) | `device/xiaomi/mist` |
-| Mist-only vendor | [vendor_xiaomi_mist](https://github.com/nAa-mist/vendor_xiaomi_mist) | `vendor/xiaomi/mist` |
-| Shared SM4450 common | [xiaomi-ravelin/android_device_xiaomi_sm4450-common](https://github.com/xiaomi-ravelin/android_device_xiaomi_sm4450-common) | `device/xiaomi/sm4450-common` |
-| SM4450 kernel | xiaomi-ravelin source (pinned in manifest) | `kernel/xiaomi/sm4450` |
-| SM4450 modules | xiaomi-ravelin source (pinned in manifest) | `kernel/xiaomi/sm4450-modules` |
-| SM4450 device trees | xiaomi-ravelin source (pinned in manifest) | `kernel/xiaomi/sm4450-devicetrees` |
-| Shared vendor binaries | to be extracted into `vendor/xiaomi/sm4450-common` | Not provided |
+| `device/xiaomi/mist` | [nAa-mist/device_xiaomi_mist](https://github.com/nAa-mist/device_xiaomi_mist) | Active device code |
+| `vendor/xiaomi/mist` | [nAa-mist/vendor_xiaomi_mist](https://github.com/nAa-mist/vendor_xiaomi_mist) | Mist-only scaffold; no blobs |
+| `device/xiaomi/sm4450-common` | [nAa-mist/device_xiaomi_sm4450-common](https://github.com/nAa-mist/device_xiaomi_sm4450-common) | 57 pinned upstream files verified |
+| `vendor/xiaomi/sm4450-common` | [nAa-mist/vendor_xiaomi_sm4450-common](https://github.com/nAa-mist/vendor_xiaomi_sm4450-common) | Empty binary/vendor makefile scaffold |
+| `kernel/xiaomi/sm4450` | [xiaomi-ravelin/android_kernel_xiaomi_sm4450](https://github.com/xiaomi-ravelin/android_kernel_xiaomi_sm4450) | **Temporary** core source; mist upload pending |
+| `kernel/xiaomi/sm4450-modules` | [nAa-mist/kernel_xiaomi_sm4450-modules](https://github.com/nAa-mist/kernel_xiaomi_sm4450-modules) | 8,966 pinned upstream files imported |
+| `kernel/xiaomi/sm4450-devicetrees` | [nAa-mist/kernel_xiaomi_sm4450-devicetrees](https://github.com/nAa-mist/kernel_xiaomi_sm4450-devicetrees) | 7,026 pinned upstream files imported |
 
-Place `manifests/mist-sm4450.xml` in `.repo/local_manifests/` after verifying
-your LineageOS manifest has no duplicate project paths.
+Additional mist source destination: [nAa-mist/kernel_xiaomi_mist](https://github.com/nAa-mist/kernel_xiaomi_mist), awaiting user-uploaded actual `mist` kernel source. The [nAa-mist/kernel_xiaomi_sm4450](https://github.com/nAa-mist/kernel_xiaomi_sm4450) repository is currently documentation only and is **not** in the sync manifest.
 
-Clone the two nAa-mist repositories into their checkout paths. Do not separately
-checkout the old `mist-bringup/device/xiaomi/mist` directory.
+Source pins are full commit SHAs for reproducibility. The device repo pins itself to `main` to avoid an impossible self-referential commit SHA. When a dependency is changed, update its pin **here in the device repository**.
 
-The `device.mk` file inherits the shared SM4450 common config and optionally
-loads `vendor/xiaomi/mist/mist-vendor.mk`; no device-only blobs are extracted yet.
+All research belongs to [nAa-mist/mist-bringup](https://github.com/nAa-mist/mist-bringup). Do not sync that research archive as a device source. No firmware or proprietary binaries are bundled.
 
-The original history and all stock inspection data stay in
-[nAa-mist/mist-bringup](https://github.com/nAa-mist/mist-bringup).
-**No firmware is downloaded by the new device preflight.**
-
-This tree has never completed a full ROM compile or real-device boot test.
+**Not ready to build or flash a ROM:** vendor extraction, exact hardware SKU, kernel, init, AVB, SELinux and real-device testing remain pending.

@@ -28,16 +28,16 @@ jobs:
           ln -s ../.. device/xiaomi/mist
           test -f generated/stock-global/file-inventory.csv
           test -f generated/stock-global/ramdisk-configs.txt
-      - name: Fetch pinned SM4450 common reference
+      - name: Fetch pinned nAa-mist SM4450 common source
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/sm4450-common"
           cd "$RUNNER_TEMP/sm4450-common"
           git init -q
-          git remote add origin https://github.com/xiaomi-ravelin/android_device_xiaomi_sm4450-common.git
-          git fetch -q --depth=1 origin a476fff00d6149fc988f12f43b73cde1587c7b88
+          git remote add origin https://github.com/nAa-mist/device_xiaomi_sm4450-common.git
+          git fetch -q --depth=1 origin bee0a6ae720c163948ae3df4a5a33ef49b2aeef8
           git checkout -q --detach FETCH_HEAD
-          test "$(git rev-parse HEAD)" = a476fff00d6149fc988f12f43b73cde1587c7b88
+          test "$(git rev-parse HEAD)" = bee0a6ae720c163948ae3df4a5a33ef49b2aeef8
       - name: Run original device-level tests
         run: |
           python3 -m compileall -q scripts
